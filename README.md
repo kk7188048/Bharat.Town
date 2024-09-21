@@ -5,6 +5,8 @@ An open source alternative to Gather.town
 
 ## Getting Started
 
+Here for now there is not authorization
+
 First, run the development server:
 
 ```bash
