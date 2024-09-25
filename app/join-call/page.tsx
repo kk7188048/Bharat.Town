@@ -37,7 +37,7 @@ export default function JoinCallPage() {
       </div>
 
       <Button onClick={handleJoinCall} className="bg-blue-600 text-white px-6 py-2 rounded-md">
-        Join Call
+        Join Call..
       </Button>
     </div>
   );
