@@ -1,24 +1,11 @@
-'use client';
-
-import { useSearchParams } from 'next/navigation';  // Use next/navigation for search params
 import React, { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:4000');
 
-const CallPage: React.FC = () => {
+const Home: React.FC = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [avatarPosition, setAvatarPosition] = useState({ x: 50, y: 50 });
-
-  const searchParams = useSearchParams();
-  const [userName, setUserName] = useState<string | null>(null);
-
-  useEffect(() => {
-    const user = searchParams.get('user');
-    setUserName(user);
-  }, [searchParams]);
-
-
 
   useEffect(() => {
     socket.on('chat message', (msg) => {
@@ -73,8 +60,6 @@ const CallPage: React.FC = () => {
         />
       </div>
       <div className="mt-4">
-      <p className="text-lg">Welcome, {userName}! The video call will be implemented soon.</p>
-
         <h2 className="text-xl">Chat</h2>
         <ul>
           {messages.map((msg, index) => (
@@ -100,4 +85,4 @@ const CallPage: React.FC = () => {
   );
 };
 
-export default CallPage;
+export default Home;
