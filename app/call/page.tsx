@@ -1,103 +1,35 @@
-'use client';
+// pages/room/[roomCode].tsx
+import React from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-import { useSearchParams } from 'next/navigation';  // Use next/navigation for search params
-import React, { useEffect, useRef, useState } from 'react';
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:4000');
-
-const CallPage: React.FC = () => {
-  const [messages, setMessages] = useState<string[]>([]);
-  const [avatarPosition, setAvatarPosition] = useState({ x: 50, y: 50 });
-
-  const searchParams = useSearchParams();
-  const [userName, setUserName] = useState<string | null>(null);
+const Room: React.FC = () => {
+  const router = useRouter();
+  const { roomcode } = router.query;
+  const [isRoomValid, setIsRoomValid] = useState(false);
 
   useEffect(() => {
-    const user = searchParams.get('user');
-    setUserName(user);
-  }, [searchParams]);
-
-
-
-  useEffect(() => {
-    socket.on('chat message', (msg) => {
-      setMessages((prev) => [...prev, msg]);
-    });
-
-    socket.on('move', (data) => {
-      setAvatarPosition(data);
-    });
-
-    return () => {
-      socket.off('chat message');
-      socket.off('move');
-    };
-  }, []);
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    let newPos = { ...avatarPosition };
-    switch (e.key) {
-      case 'ArrowUp':
-        newPos.y -= 5;
-        break;
-      case 'ArrowDown':
-        newPos.y += 5;
-        break;
-      case 'ArrowLeft':
-        newPos.x -= 5;
-        break;
-      case 'ArrowRight':
-        newPos.x += 5;
-        break;
-      default:
-        return;
+    if (roomcode) {
+      // Optionally, verify if the room exists via API call
+      // For now, we'll assume any roomCode is valid.
+      setIsRoomValid(true);
     }
-    setAvatarPosition(newPos);
-    socket.emit('move', newPos);
-  };
+  }, [roomcode]);
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [avatarPosition]);
+  if (!isRoomValid) {
+    return <p>Loading room...</p>;
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <div className="relative w-full h-full bg-gray-200">
-        <div 
-          className="absolute w-10 h-10 bg-blue-500 rounded-full" 
-          style={{ left: avatarPosition.x + '%', top: avatarPosition.y + '%' }}
-        />
+    <div className="h-screen flex flex-col items-center justify-center bg-gray-100">
+      <h1 className="text-4xl font-bold mb-4">Room: {roomcode}</h1>
+      {/* This is where the virtual space will be loaded */}
+      <div className="flex items-center space-x-4">
+        <p>Welcome to your virtual space!</p>
+        {/* Add map, avatars, or other room-specific content here */}
       </div>
-      <div className="mt-4">
-      <p className="text-lg">Welcome, {userName}! The video call will be implemented soon.</p>
-
-        <h2 className="text-xl">Chat</h2>
-        <ul>
-          {messages.map((msg, index) => (
-            <li key={index}>{msg}</li>
-          ))}
-        </ul>
-      </div>
-      <input 
-        type="text" 
-        onKeyPress={(e) => {
-          if (e.key === 'Enter') {
-            const input = e.currentTarget.value;
-            if (input.trim()) {
-              socket.emit('chat message', input);
-              e.currentTarget.value = '';
-            }
-          }
-        }} 
-        placeholder="Type a message..." 
-        className="border p-2 mt-2"
-      />
     </div>
   );
 };
 
-export default CallPage;
+export default Room;
