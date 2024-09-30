@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import Header from './components/Header';
+import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
 import './globals.css';
@@ -11,7 +11,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
-        <Header />
+        <Navbar />
         <main className="flex-grow container mx-auto p-4">
           {children}
         </main>
